@@ -1,31 +1,32 @@
---// FloorzHUB Loader by ChatGPT 💀
-local repoURL = "https://raw.githubusercontent.com/FlorzXD/FloorzHUB/main/src/main.lua"
+-- FloorzHUB Loader
+-- This is what users paste into their executor
+-- It loads the main script from GitHub
 
--- Show notification on script load (Synapse or KRNL supported)
-pcall(function()
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "FloorzHUB",
-        Text = "Loading script...",
-        Duration = 5
-    })
-end)
-
--- Fetch and load the main script
-local success, result = pcall(function()
-    return loadstring(game:HttpGet(repoURL, true))()
+local success, err = pcall(function()
+    local repoUrl = "https://raw.githubusercontent.com/YourUsername/YourRepoName/main/src/main.lua"
+    
+    -- Check if already loaded
+    if _G.FloorzHUB_Loaded then
+        return print("[FloorzHUB] Already loaded!")
+    end
+    
+    -- Load the main script
+    local response = game:HttpGet(repoUrl, true)
+    if not response then
+        error("Failed to fetch main script")
+    end
+    
+    -- Execute the main script
+    local mainScript = loadstring(response)
+    if mainScript then
+        mainScript()
+        _G.FloorzHUB_Loaded = true
+        print("[FloorzHUB] Successfully loaded!")
+    else
+        error("Failed to load main script")
+    end
 end)
 
 if not success then
-    warn("[FloorzHUB Loader] Failed to load main script:", result)
-    -- Show error in the output window
-    pcall(function()
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "FloorzHUB",
-            Text = "Error loading script! Check console for details.",
-            Duration = 10
-        })
-    end)
-    -- Printing detailed error in output
-    print("[ERROR DETAILS] " .. tostring(result))
+    warn("[FloorzHUB Loader Error] " .. tostring(err))
 end
-
