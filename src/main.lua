@@ -1,71 +1,96 @@
--- Vape UI Setup
-local Vape = loadstring(game:HttpGet('https://raw.githubusercontent.com/eliteyt2337/VapeUI/main/source.lua'))()
+-- FloorzHUB Main Script
+-- This is the core script that orchestrates all functionality
 
--- Create the Vape UI Window
-local Window = Vape:CreateWindow("FloorzHUB | VapeUI")
-Window:CreateLabel("Welcome to FloorzHUB with Vape UI!")
+local FloorzHUB = {
+    Version = "2.1.0",
+    Config = {},
+    Modules = {},
+    Services = {
+        Players = game:GetService("Players"),
+        ReplicatedStorage = game:GetService("ReplicatedStorage"),
+        RunService = game:GetService("RunService"),
+        TeleportService = game:GetService("TeleportService"),
+        HttpService = game:GetService("HttpService"),
+        TweenService = game:GetService("TweenService"),
+        Lighting = game:GetService("Lighting"),
+        Workspace = game:GetService("Workspace")
+    },
+    Player = game:GetService("Players").LocalPlayer,
+    Character = nil,
+    GUI = nil,
+    Loaded = false
+}
 
--- Create Tabs
-local autofarmTab = Window:CreateTab("Autofarm")
-local devilFruitTab = Window:CreateTab("Devil Fruits")
-local teleportTab = Window:CreateTab("Teleport")
-local shopTab = Window:CreateTab("Shop")
-local miscTab = Window:CreateTab("Misc")
+-- Load dependencies
+local function LoadModule(name)
+    local moduleUrl = "https://raw.githubusercontent.com/YourUsername/YourRepoName/main/src/" .. name
+    local success, response = pcall(function()
+        return game:HttpGet(moduleUrl, true)
+    end)
+    
+    if success and response then
+        local moduleScript = loadstring(response)
+        if moduleScript then
+            return moduleScript()
+        end
+    end
+    warn("[FloorzHUB] Failed to load module: " .. name)
+    return nil
+end
 
--- Autofarm Tab Controls
-autofarmTab:CreateToggle("Enable Autofarm", false, function(state)
-    -- Place your autofarm code here
-    print("Autofarm Enabled: " .. tostring(state))
-end)
+-- Initialize core modules
+FloorzHUB.Modules.GUI = LoadModule("gui/init.lua")
+FloorzHUB.Modules.Settings = LoadModule("core/settings.lua")
+FloorzHUB.Modules.Utilities = LoadModule("core/utilities.lua")
+FloorzHUB.Modules.Constants = LoadModule("core/constants.lua")
 
-autofarmTab:CreateButton("Start Autofarming", function()
-    -- Trigger your autofarming logic here
-    print("Autofarming started!")
-end)
+-- Initialize feature modules
+FloorzHUB.Modules.AutoFarm = LoadModule("modules/autofarm.lua")
+FloorzHUB.Modules.Navigation = LoadModule("modules/navigation.lua")
+FloorzHUB.Modules.DevilFruit = LoadModule("modules/devilfruit.lua")
+FloorzHUB.Modules.Shop = LoadModule("modules/shop.lua")
+FloorzHUB.Modules.Webhook = LoadModule("modules/webhook.lua")
+FloorzHUB.Modules.Misc = LoadModule("modules/misc.lua")
+FloorzHUB.Modules.Bypass = LoadModule("modules/bypass.lua")
 
--- Devil Fruits Tab Controls
-devilFruitTab:CreateToggle("Enable Auto Fruit Spin", false, function(state)
-    -- Add your Auto Fruit Spin logic here
-    print("Auto Fruit Spin Enabled: " .. tostring(state))
-end)
+-- Main initialization
+function FloorzHUB:Init()
+    if self.Loaded then return end
+    
+    -- Wait for player to load
+    repeat task.wait() until self.Player.Character
+    self.Character = self.Player.Character
+    
+    -- Setup character tracking
+    self.Player.CharacterAdded:Connect(function(char)
+        self.Character = char
+        task.wait(1) -- Wait for character to fully load
+        if self.Modules.AutoFarm then
+            self.Modules.AutoFarm:CharacterUpdated()
+        end
+    end)
+    
+    -- Load settings
+    self.Config = self.Modules.Settings:Load()
+    
+    -- Initialize GUI
+    if self.Modules.GUI then
+        self.GUI = self.Modules.GUI.new(self)
+        self.GUI:CreateMainWindow()
+    end
+    
+    -- Initialize modules
+    for name, module in pairs(self.Modules) do
+        if module.Init and type(module.Init) == "function" then
+            module:Init(self)
+        end
+    end
+    
+    self.Loaded = true
+    print(string.format("[FloorzHUB v%s] Initialized successfully!", self.Version))
+end
 
-devilFruitTab:CreateButton("Grab Fruit", function()
-    -- Trigger your fruit grabbing code here
-    print("Grabbing fruit!")
-end)
+-- Start the script
+FloorzHUB:Init()
 
--- Teleport Tab Controls
-teleportTab:CreateButton("Teleport to First Sea", function()
-    -- Add teleport code to First Sea
-    print("Teleporting to First Sea...")
-end)
-
-teleportTab:CreateButton("Teleport to Boss", function()
-    -- Add teleport code to Boss locations
-    print("Teleporting to Boss...")
-end)
-
--- Shop Tab Controls
-shopTab:CreateButton("Buy Weapons", function()
-    -- Trigger your buy weapons logic here
-    print("Buying Weapons...")
-end)
-
-shopTab:CreateButton("Buy Boats", function()
-    -- Trigger your buy boats logic here
-    print("Buying Boats...")
-end)
-
--- Misc Tab Controls
-miscTab:CreateToggle("Enable Anti-AFK", false, function(state)
-    -- Anti-AFK Logic
-    print("Anti-AFK Enabled: " .. tostring(state))
-end)
-
-miscTab:CreateButton("Enable FPS Boost", function()
-    -- FPS boost logic
-    print("FPS Boost Enabled!")
-end)
-
--- Open Vape UI
-Window:Show()
+return FloorzHUB
