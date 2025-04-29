@@ -1,71 +1,71 @@
---// src/main.lua — FloorzHUB Self-Contained GUI & Debug
+-- Vape UI Setup
+local Vape = loadstring(game:HttpGet('https://raw.githubusercontent.com/eliteyt2337/VapeUI/main/source.lua'))()
 
--- 1) Debug print on load
-print("[FloorzHUB] main.lua loaded!")
+-- Create the Vape UI Window
+local Window = Vape:CreateWindow("FloorzHUB | VapeUI")
+Window:CreateLabel("Welcome to FloorzHUB with Vape UI!")
 
--- 2) Quick notification
-pcall(function()
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "FloorzHUB",
-        Text = "Main script started!",
-        Duration = 4
-    })
+-- Create Tabs
+local autofarmTab = Window:CreateTab("Autofarm")
+local devilFruitTab = Window:CreateTab("Devil Fruits")
+local teleportTab = Window:CreateTab("Teleport")
+local shopTab = Window:CreateTab("Shop")
+local miscTab = Window:CreateTab("Misc")
+
+-- Autofarm Tab Controls
+autofarmTab:CreateToggle("Enable Autofarm", false, function(state)
+    -- Place your autofarm code here
+    print("Autofarm Enabled: " .. tostring(state))
 end)
 
--- 3) Load Rayfield UI library
-local ok, Rayfield = pcall(function()
-    return loadstring(game:HttpGet(
-        "https://raw.githubusercontent.com/shlexware/Rayfield/main/source.lua",
-    true))()
+autofarmTab:CreateButton("Start Autofarming", function()
+    -- Trigger your autofarming logic here
+    print("Autofarming started!")
 end)
-if not ok then
-    warn("[FloorzHUB] Failed to load Rayfield UI:", Rayfield)
-    return
-end
 
--- 4) Create the main window
-local Window = Rayfield:CreateWindow({
-    Name = "FLOORZHUB | Blox Fruits",
-    LoadingTitle = "FloorzHUB",
-    LoadingSubtitle = "by FlorzXD",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "FloorzHUBConfig",
-        FileName = "Settings"
-    },
-    Discord = {
-        Enabled = false
-    },
-    KeySystem = false
-})
+-- Devil Fruits Tab Controls
+devilFruitTab:CreateToggle("Enable Auto Fruit Spin", false, function(state)
+    -- Add your Auto Fruit Spin logic here
+    print("Auto Fruit Spin Enabled: " .. tostring(state))
+end)
 
--- 5) Helper for in-game notifications
-local function notify(content)
-    pcall(function()
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "FloorzHUB",
-            Text = content,
-            Duration = 3
-        })
-    end)
-end
+devilFruitTab:CreateButton("Grab Fruit", function()
+    -- Trigger your fruit grabbing code here
+    print("Grabbing fruit!")
+end)
 
-notify("GUI loaded successfully!")
+-- Teleport Tab Controls
+teleportTab:CreateButton("Teleport to First Sea", function()
+    -- Add teleport code to First Sea
+    print("Teleporting to First Sea...")
+end)
 
--- 6) Create tabs
-local AutofarmTab = Window:CreateTab("🧪 Autofarm")
-local FruitsTab   = Window:CreateTab("🍎 Devil Fruits")
-local TeleportTab = Window:CreateTab("🌍 Teleport")
-local ShopTab     = Window:CreateTab("🛒 Shop")
-local MiscTab     = Window:CreateTab("🎮 Misc")
-local SettingsTab = Window:CreateTab("⚙️ Settings")
+teleportTab:CreateButton("Teleport to Boss", function()
+    -- Add teleport code to Boss locations
+    print("Teleporting to Boss...")
+end)
 
--- 7) Placeholder labels (we’ll replace these with real controls next)
-AutofarmTab:CreateLabel("Autofarm features coming soon...")
-FruitsTab:CreateLabel("Devil Fruit features coming soon...")
-TeleportTab:CreateLabel("Teleportation tools coming soon...")
-ShopTab:CreateLabel("Shop automation coming soon...")
-MiscTab:CreateLabel("Miscellaneous tools coming soon...")
-SettingsTab:CreateLabel("Configure your FloorzHUB settings here.")
+-- Shop Tab Controls
+shopTab:CreateButton("Buy Weapons", function()
+    -- Trigger your buy weapons logic here
+    print("Buying Weapons...")
+end)
 
-print("[FloorzHUB] GUI and placeholders initialized!")
+shopTab:CreateButton("Buy Boats", function()
+    -- Trigger your buy boats logic here
+    print("Buying Boats...")
+end)
+
+-- Misc Tab Controls
+miscTab:CreateToggle("Enable Anti-AFK", false, function(state)
+    -- Anti-AFK Logic
+    print("Anti-AFK Enabled: " .. tostring(state))
+end)
+
+miscTab:CreateButton("Enable FPS Boost", function()
+    -- FPS boost logic
+    print("FPS Boost Enabled!")
+end)
+
+-- Open Vape UI
+Window:Show()
