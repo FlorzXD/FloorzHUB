@@ -1,41 +1,26 @@
---// gui/init.lua
+-- FloorzHUB GUI Module
+-- Creates the modern, sleek interface
 
-local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source.lua"))()
-local Window = Rayfield:CreateWindow({
-    Name = "FLOORZHUB | Blox Fruits",
-    LoadingTitle = "FloorzHUB",
-    LoadingSubtitle = "by FlorzXD",
-    ConfigurationSaving = {
-       Enabled = true,
-       FolderName = "FloorzHUBConfig", -- Saves settings
-       FileName = "FloorzHUB"
-    },
-    Discord = {
-       Enabled = false
-    },
-    KeySystem = false -- Will be enabled later
-})
+local GUI = {}
+GUI.__index = GUI
 
--- Notifications
-Rayfield:Notify({
-    Title = "FloorzHUB Loaded",
-    Content = "Welcome back, legend.",
-    Duration = 5,
-    Image = nil
-})
-
--- Tabs
-local tabs = {
-    Autofarm = Window:CreateTab("🧪 Autofarm"),
-    Fruits = Window:CreateTab("🍎 Devil Fruits"),
-    Teleport = Window:CreateTab("🌍 Teleport"),
-    Shop = Window:CreateTab("🛒 Shop"),
-    Misc = Window:CreateTab("🎮 Misc"),
-    Settings = Window:CreateTab("⚙️ Settings"),
+-- Colors
+local Colors = {
+    Background = Color3.fromRGB(20, 25, 30),
+    Primary = Color3.fromRGB(0, 162, 255),
+    Secondary = Color3.fromRGB(40, 45, 50),
+    Text = Color3.fromRGB(240, 240, 240),
+    Success = Color3.fromRGB(0, 200, 83),
+    Warning = Color3.fromRGB(255, 171, 0),
+    Error = Color3.fromRGB(255, 55, 80)
 }
 
-return {
-    Rayfield = Rayfield,
-    Tabs = tabs
-}
+function GUI.new(FloorzHUB)
+    local self = setmetatable({}, GUI)
+    self.FloorzHUB = FloorzHUB
+    self.Objects = {}
+    self.Notifications = {}
+    return self
+end
 
+function GUI
